@@ -1,33 +1,24 @@
 import streamlit as st
-import cv2
+from PIL import Image
+import random
 
-st.title("Crop Theft & Animal Intrusion Detection Demo")
+st.title("Crop Theft & Animal Intrusion Detection System")
 
-run = st.checkbox("Start Camera")
+st.write("Upload an image to simulate intrusion detection")
 
-FRAME_WINDOW = st.image([])
+uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
 
-camera = cv2.VideoCapture(0)
+if uploaded_file is not None:
+    image = Image.open(uploaded_file)
+    st.image(image, caption="Uploaded Image", use_container_width=True)
 
-human_cascade = cv2.CascadeClassifier(
-    cv2.data.haarcascades + 'haarcascade_fullbody.xml'
-)
+    # Simulated detection logic
+    detection = random.choice(["Human", "Animal"])
 
-while run:
-    ret, frame = camera.read()
-    if not ret:
-        break
-
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    humans = human_cascade.detectMultiScale(gray, 1.1, 4)
-
-    if len(humans) > 0:
+    if detection == "Human":
         st.success("Human Detected!")
-        st.write("SMS Alert Sent to Farmer")
+        st.write("Alert: SMS Sent to Farmer")
         st.write("Alarm Activated")
     else:
         st.warning("Animal Detected")
-
-    FRAME_WINDOW.image(frame, channels="BGR")
-
-camera.release()
+        st.write("Monitoring Situation")
